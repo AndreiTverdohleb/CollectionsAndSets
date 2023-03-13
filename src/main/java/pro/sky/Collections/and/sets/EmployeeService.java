@@ -2,8 +2,7 @@ package pro.sky.Collections.and.sets;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -11,52 +10,54 @@ public class EmployeeService {
 
     private final int employeesCount = 2;
 
-    private final List<Employee> employees = new ArrayList<>();
+    private final Map<Integer,Employee> employeesByHashCode = new HashMap<>();
 
     public Employee add (String firstName, String lastName) {
 
-        if (employees.size() == employeesCount) {
-
-            throw new EmployeeStorageIsFullException("Массив сотрудников переполнен");
+        if (employeesByHashCode.size() == employeesCount) {
+            throw new EmployeeStorageIsFullException("Хранилище сотрудников переполнен");
         }
+
         Employee employee = new Employee(firstName, lastName);
+        int employeeHashCode = employee.hashCode();
 
-        if (employees.contains(employee)) {
-            throw new EmployeeAlreadyAddedException("В массиве уже есть такой сотрудник");
+        if (employeesByHashCode.containsKey(employeeHashCode)) {
+            throw new EmployeeAlreadyAddedException("В хранилище уже есть такой сотрудник");
         }
+        employeesByHashCode.put(employeeHashCode, employee);
 
-        employees.add(employee );
         return employee;
 
         }
 
     public Employee find(String firstName, String lastName){
-        Employee employee = null;
-        for (Employee e : employees) {
-            if (e != null && firstName.equals(e.getFirstName()) && lastName.equals(e.getLastName())) {
-                employee = e;
-            }
-        }
+        int employeeHashCode = getEmployeeKey(firstName, lastName);
+        Employee employee = employeesByHashCode.get(employeeHashCode);
+
         if (employee == null) {
-            throw new EmployeeNotFoundException("Cотрудник не найден");
+            throw new EmployeeNotFoundException("Сотрудник не найден");
         }
+
         return employee;
     }
 
     public Employee remove(String firstName, String lastName) {
-        Employee employee = find(firstName, lastName);
+        int employeeHashcode = getEmployeeKey(firstName, lastName);
+        Employee employee = employeesByHashCode.remove(employeeHashcode);
 
-        for (Employee e : employees) {
-            if (e.equals(employee)) {
-                return e;
-            }
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Сотрудник не найден");
         }
 
         return employee;
     }
 
     public List<Employee> getAll() {
-        return employees;
+        return employeesByHashCode.values().stream().toList() ;
+    }
+
+    private int getEmployeeKey(String firstName, String lastName) {
+        return Objects.hash(firstName, lastName);
     }
 
 
