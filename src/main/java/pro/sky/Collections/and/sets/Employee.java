@@ -3,21 +3,48 @@ package pro.sky.Collections.and.sets;
 import java.util.Objects;
 
 public class Employee {
-    public final String firstName;
-    public final String lastName;
+    private  String firstName;
+    private  String lastName;
+    private  double salary;
+    private  int department;
 
-    public Employee(String fullName, String lastName) {
+    public Employee(String fullName, String lastName, double salary, int department) {
         this.firstName = fullName;
         this.lastName = lastName;
+        this.salary = salary;
+        this.department = department;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public int getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(int department) {
+        this.department = department;
     }
 
     @Override
